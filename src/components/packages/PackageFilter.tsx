@@ -12,13 +12,11 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { FilterOptions } from '@/types';
 
 const CATEGORIES = [
-  { value: 'all', label: 'All' },
-  { value: 'adventure', label: 'Adventure' },
-  { value: 'luxury', label: 'Luxury' },
-  { value: 'beach', label: 'Beach' },
-  { value: 'cultural', label: 'Cultural' },
+  { value: 'all',       label: 'All Packages' },
+  { value: 'cultural',  label: 'Cultural Tours' },
   { value: 'honeymoon', label: 'Honeymoon' },
-  { value: 'family', label: 'Family' },
+  { value: 'adventure', label: 'Customized Tours' },
+  { value: 'luxury',    label: 'Transfers' },
 ];
 
 interface PackageFilterProps {
@@ -86,7 +84,7 @@ export default function PackageFilter({ filters, onChange }: PackageFilterProps)
                 onChange({ ...filters, minPrice: min, maxPrice: max });
               }}
               min={0}
-              max={5000}
+              max={2500}
               step={100}
               sx={{
                 color: 'var(--primary)',
@@ -119,7 +117,7 @@ export default function PackageFilter({ filters, onChange }: PackageFilterProps)
                 onChange({
                   category: 'all',
                   minPrice: 0,
-                  maxPrice: 5000,
+                  maxPrice: 2500,
                   duration: '',
                   sortBy: 'popularity',
                 })

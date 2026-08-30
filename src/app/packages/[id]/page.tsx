@@ -16,7 +16,7 @@ export async function generateMetadata({
   const pkg = packages.find((p) => p.id === id);
   if (!pkg) return {};
   return {
-    title: `${pkg.title} | Voyaage`,
+    title: `${pkg.title} | Pear Trails`,
     description: pkg.description.slice(0, 160),
   };
 }

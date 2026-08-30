@@ -9,22 +9,22 @@ import SectionTitle from '@/components/shared/SectionTitle';
 import { STATS } from '@/constants';
 
 export const metadata: Metadata = {
-  title: 'About Us | Voyaage',
-  description: 'Learn about Voyaage — the team behind your unforgettable travel experiences.',
+  title: 'About Us | Pear Trails',
+  description: 'Learn about Pear Trails — your local Sri Lanka travel partner dedicated to authentic, personalized island journeys.',
 };
 
 const team = [
-  { name: 'Alexandra Reed', role: 'Founder & CEO', img: 'https://i.pravatar.cc/300?img=23' },
-  { name: 'Marcus Chen', role: 'Head of Operations', img: 'https://i.pravatar.cc/300?img=53' },
-  { name: 'Sofia Patel', role: 'Travel Experience Director', img: 'https://i.pravatar.cc/300?img=25' },
-  { name: 'James Okafor', role: 'Lead Tour Designer', img: 'https://i.pravatar.cc/300?img=57' },
+  { name: 'Travel Specialist', role: 'Tour Planning & Design', img: 'https://i.pravatar.cc/300?img=53' },
+  { name: 'Guest Relations', role: 'Customer Experience', img: 'https://i.pravatar.cc/300?img=25' },
+  { name: 'Senior Driver Guide', role: 'Island-Wide Chauffeur', img: 'https://i.pravatar.cc/300?img=57' },
+  { name: 'Local Expert', role: 'Destination Specialist', img: 'https://i.pravatar.cc/300?img=23' },
 ];
 
 const values = [
-  { Icon: CheckCircleIcon, title: 'Quality First', desc: 'Every package is curated with meticulous attention to detail and excellence.' },
-  { Icon: PublicIcon, title: 'Global Reach', desc: 'Partnerships with local experts in 120+ countries give you authentic experiences.' },
-  { Icon: GroupsIcon, title: 'People-Centric', desc: 'Your journey is personal. We tailor every experience to your unique story.' },
-  { Icon: EmojiEventsIcon, title: 'Award-Winning', desc: 'Recognized globally for service excellence and transformative travel experiences.' },
+  { Icon: CheckCircleIcon, title: 'Tailor-Made Experiences', desc: 'Every traveler is unique. We customize each itinerary according to your interests, travel style, and schedule.' },
+  { Icon: PublicIcon, title: 'Local Expertise', desc: 'We know Sri Lanka beyond the tourist trails and can introduce you to places many visitors never discover.' },
+  { Icon: GroupsIcon, title: 'Comfort at Every Mile', desc: 'Modern, air-conditioned vehicles maintained to high standards for a smooth and relaxing travel experience.' },
+  { Icon: EmojiEventsIcon, title: 'Authentic Experiences', desc: 'We believe the true beauty of Sri Lanka is discovered in hidden roads, local hosts, and stories waiting around every corner.' },
 ];
 
 export default function AboutPage() {
@@ -34,7 +34,7 @@ export default function AboutPage() {
       <div className="relative h-72 md:h-96 overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1920&q=80"
-          alt="About Voyaage"
+          alt="About Pear Trails"
           fill
           className="object-cover"
           priority
@@ -42,10 +42,10 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary-dark/60 flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-white mb-3">
-              About Voyaage
+              About Pear Trails
             </h1>
             <p className="text-white/80 text-lg max-w-xl">
-              We&apos;re passionate explorers who believe travel transforms lives.
+              Your local travel partner for authentic, personalized Sri Lanka journeys.
             </p>
           </div>
         </div>
@@ -59,13 +59,13 @@ export default function AboutPage() {
               Our Mission
             </span>
             <h2 className="font-heading text-3xl font-bold text-[var(--text-primary)] mb-4 leading-tight">
-              Creating Memories That Last a Lifetime
+              Your Local Partner for Authentic Sri Lanka Journeys
             </h2>
             <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
-              Founded in 2010, Voyaage was born from a simple belief: every person deserves to experience the world&apos;s beauty. We&apos;ve grown from a small team of 3 passionate travelers to a global travel company serving over 50,000 adventurers annually.
+              At Pear Trails, we believe the true beauty of Sri Lanka cannot be found in guidebooks alone. It is discovered in the hidden village roads, the smile of a local host, the scent of freshly brewed Ceylon tea, the thrill of a safari at sunrise, and the stories waiting around every corner.
             </p>
             <p className="text-[var(--text-secondary)] leading-relaxed mb-6">
-              We don&apos;t just plan trips — we craft journeys that connect you with cultures, landscapes, and people that change the way you see the world.
+              We are not simply a transportation provider or a tour operator — we are your dedicated local travel partner, creating seamless, personalized, and meaningful journeys that allow you to experience the very best of Sri Lanka, comfortably, safely, and authentically.
             </p>
             <Link
               href="/packages"

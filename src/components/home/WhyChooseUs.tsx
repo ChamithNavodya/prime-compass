@@ -13,30 +13,30 @@ import { STATS } from '@/constants';
 const features = [
   {
     Icon: VerifiedIcon,
-    title: 'Trusted & Verified',
+    title: 'Professional & Reliable',
     description:
-      'Every destination and accommodation is personally verified by our travel experts for quality and safety.',
+      'Our experienced local drivers are courteous, knowledgeable, and committed to safe and comfortable travel throughout your journey.',
     color: '#1A237E',
   },
   {
     Icon: SupportAgentIcon,
-    title: '24/7 Support',
+    title: 'Dedicated Support',
     description:
-      'Our dedicated team is available around the clock to assist you before, during, and after your journey.',
+      'From your first inquiry until your departure flight, our team is available to assist whenever you need us.',
     color: '#FF6B35',
   },
   {
     Icon: PriceCheckIcon,
-    title: 'Best Price Guarantee',
+    title: 'Transparent Pricing',
     description:
-      'We match any price for the same package. No hidden fees, full transparency in all our pricing.',
+      'No hidden costs. No surprises. Just honest pricing and exceptional service on every journey we create.',
     color: '#00897B',
   },
   {
     Icon: EmojiEventsIcon,
-    title: 'Award-Winning Service',
+    title: 'Local Expertise',
     description:
-      'Recognized as the Best Travel Agency for 5 consecutive years by global travel associations.',
+      'We know Sri Lanka beyond the tourist trails and can introduce you to places many visitors never discover.',
     color: '#1A237E',
   },
 ];
@@ -95,7 +95,7 @@ export default function WhyChooseUs() {
     <section className="py-20 bg-[var(--background)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionTitle
-          badge="Why Voyaage"
+          badge="Why Pear Trails"
           title="Why Travelers"
           highlight="Choose Us"
           subtitle="We go above and beyond to ensure every journey exceeds expectations"

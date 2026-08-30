@@ -1,7 +1,7 @@
 export const BRAND_CONFIG = {
-  name: "Voyaage",
-  tagline: "Discover Your Next Adventure",
-  description: "Curated travel experiences designed to create unforgettable memories",
+  name: "Pear Trails",
+  tagline: "Discover the Soul of Sri Lanka",
+  description: "Your local travel partner for seamless, personalized, and authentic Sri Lanka journeys",
   primaryColor: "#1A237E",
   secondaryColor: "#FF6B35",
   accentColor: "#00897B",
@@ -10,22 +10,22 @@ export const BRAND_CONFIG = {
   background: "#F8F9FA",
 
   contact: {
-    email: "info@voyaage.com",
-    phone: "+94768851101",
-    address: "123 Travel Street, Adventure City, AC 12345",
+    email: "info@peartrails.com",
+    phone: "+94 77 000 0000",
+    address: "Colombo, Sri Lanka",
   },
 
   social: {
-    instagram: "https://instagram.com/voyaage",
-    facebook: "https://facebook.com/voyaage",
-    youtube: "https://youtube.com/voyaage",
-    twitter: "https://twitter.com/voyaage",
+    instagram: "https://instagram.com/peartrails",
+    facebook: "https://facebook.com/peartrails",
+    youtube: "https://youtube.com/peartrails",
+    twitter: "https://twitter.com/peartrails",
   },
 
   seo: {
-    title: "Voyaage - Discover Your Next Adventure",
+    title: "Pear Trails - Discover the Soul of Sri Lanka",
     description:
-      "Book amazing tour packages, explore destinations, and create unforgettable memories with Voyaage.",
+      "Private tours, airport transfers, multi-day adventures, and customized itineraries across Sri Lanka — crafted by your local travel partner, Pear Trails.",
   },
 };
 
@@ -38,8 +38,8 @@ export const NAV_LINKS = [
 ];
 
 export const STATS = [
-  { value: 50000, suffix: "+", label: "Happy Travelers" },
-  { value: 120, suffix: "+", label: "Destinations" },
-  { value: 15, suffix: "+", label: "Years Experience" },
+  { value: 5000, suffix: "+", label: "Happy Travelers" },
+  { value: 50, suffix: "+", label: "Sri Lanka Packages" },
+  { value: 10, suffix: "+", label: "Years Experience" },
   { value: 98, suffix: "%", label: "Satisfaction Rate" },
 ];

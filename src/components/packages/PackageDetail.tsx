@@ -16,8 +16,13 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import PeopleIcon from '@mui/icons-material/People';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import EmailIcon from '@mui/icons-material/Email';
 import { Package } from '@/types';
+import { BRAND_CONFIG } from '@/constants';
+import { packages } from '@/data/packages';
+import PackageCard from './PackageCard';
+import { staggerContainer, fadeInUp } from '@/utils/animations';
 
 interface TabPanelProps {
   children: React.ReactNode;
@@ -46,7 +51,14 @@ function TabPanel({ children, value, index }: TabPanelProps) {
 export default function PackageDetail({ pkg }: { pkg: Package }) {
   const [activeImage, setActiveImage] = useState(0);
   const [tab, setTab] = useState(0);
-  const [guests, setGuests] = useState(2);
+
+  const phone = BRAND_CONFIG.contact.phone.replace(/\D/g, '');
+  const waMessage = encodeURIComponent(
+    `Hi Pear Trails! I'm interested in the "${pkg.title}" package. Could you share more details?`
+  );
+  const waUrl = `https://wa.me/${phone}?text=${waMessage}`;
+
+  const related = packages.filter((p) => p.id !== pkg.id).slice(0, 2);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -230,89 +242,101 @@ export default function PackageDetail({ pkg }: { pkg: Package }) {
           </div>
         </div>
 
-        {/* Right: Sticky booking widget */}
+        {/* Right: Inquiry widget */}
         <div className="lg:col-span-1">
           <div className="sticky top-24">
             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <h3 className="font-heading font-semibold text-lg text-[var(--text-primary)] mb-4">
-                Book This Package
+              <h3 className="font-heading font-semibold text-lg text-[var(--text-primary)] mb-1">
+                Interested in this package?
               </h3>
+              <p className="text-sm text-[var(--text-secondary)] mb-5">
+                Contact us to plan your perfect Sri Lanka journey.
+              </p>
 
-              <div className="space-y-4 mb-6">
-                <div>
-                  <label className="block text-xs text-[var(--text-secondary)] mb-1.5">
-                    Travel Date
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-[var(--text-primary)] outline-none focus:border-primary transition-colors cursor-pointer"
-                  />
+              {/* Package summary */}
+              <div className="space-y-3 mb-6 p-4 bg-[var(--background)] rounded-xl">
+                <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <AccessTimeIcon sx={{ fontSize: 16, color: 'var(--secondary)', flexShrink: 0 }} />
+                  <span>{pkg.duration}</span>
                 </div>
-
-                <div>
-                  <label className="block text-xs text-[var(--text-secondary)] mb-1.5">
-                    Guests
-                  </label>
-                  <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                    <button
-                      onClick={() => setGuests((g) => Math.max(1, g - 1))}
-                      className="px-4 py-2.5 text-[var(--text-secondary)] hover:bg-gray-50 cursor-pointer transition-colors text-lg"
-                    >
-                      −
-                    </button>
-                    <div className="flex-1 text-center text-sm font-medium text-[var(--text-primary)]">
-                      <PeopleIcon sx={{ fontSize: 14, mr: 0.5, verticalAlign: 'middle' }} />
-                      {guests} {guests === 1 ? 'Guest' : 'Guests'}
-                    </div>
-                    <button
-                      onClick={() => setGuests((g) => g + 1)}
-                      className="px-4 py-2.5 text-[var(--text-secondary)] hover:bg-gray-50 cursor-pointer transition-colors text-lg"
-                    >
-                      +
-                    </button>
-                  </div>
+                <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <LocationOnIcon sx={{ fontSize: 16, color: 'var(--secondary)', flexShrink: 0 }} />
+                  <span>{pkg.destination}, {pkg.country}</span>
                 </div>
-              </div>
-
-              {/* Price breakdown */}
-              <div className="space-y-2 mb-4 text-sm">
-                <div className="flex justify-between text-[var(--text-secondary)]">
-                  <span>${pkg.price.toLocaleString()} × {guests} guests</span>
-                  <span>${(pkg.price * guests).toLocaleString()}</span>
+                <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <CalendarMonthIcon sx={{ fontSize: 16, color: 'var(--secondary)', flexShrink: 0 }} />
+                  <span>Best: {pkg.bestTimeToVisit}</span>
                 </div>
-                <div className="flex justify-between text-[var(--text-secondary)]">
-                  <span>Taxes & Fees (10%)</span>
-                  <span>${Math.round(pkg.price * guests * 0.1).toLocaleString()}</span>
-                </div>
-                <div className="h-px bg-gray-100" />
-                <div className="flex justify-between font-bold text-base text-[var(--text-primary)]">
-                  <span>Total</span>
-                  <span className="text-primary">
-                    ${Math.round(pkg.price * guests * 1.1).toLocaleString()}
+                <div className="h-px bg-gray-200" />
+                <div className="flex items-baseline gap-1">
+                  <span className="text-xs text-[var(--text-secondary)]">From</span>
+                  <span className="font-heading font-bold text-2xl text-primary">
+                    ${pkg.price.toLocaleString()}
                   </span>
+                  <span className="text-xs text-[var(--text-secondary)]">/ person</span>
                 </div>
               </div>
 
-              <Link
-                href={`/contact?package=${pkg.id}`}
-                className="block w-full text-center py-3.5 bg-secondary text-white rounded-xl font-semibold cursor-pointer hover:bg-secondary-dark transition-colors mb-3"
-              >
-                Book Now
-              </Link>
-              <Link
-                href="/contact"
-                className="block w-full text-center py-3 border border-primary text-primary rounded-xl font-medium text-sm cursor-pointer hover:bg-primary hover:text-white transition-all"
-              >
-                Enquire
-              </Link>
+              {/* CTAs */}
+              <div className="space-y-3">
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-3.5 bg-[#25D366] text-white rounded-xl font-semibold hover:bg-[#1ebe5d] transition-colors"
+                >
+                  <WhatsAppIcon sx={{ fontSize: 20 }} />
+                  Inquire on WhatsApp
+                </a>
+                <Link
+                  href={`/contact?package=${pkg.id}`}
+                  className="flex items-center justify-center gap-2 w-full py-3 border border-primary text-primary rounded-xl font-medium text-sm hover:bg-primary hover:text-white transition-all"
+                >
+                  <EmailIcon sx={{ fontSize: 18 }} />
+                  Send an Enquiry
+                </Link>
+              </div>
 
-              <p className="text-center text-xs text-[var(--text-secondary)] mt-3">
-                Free cancellation up to 14 days before
+              <p className="text-center text-xs text-[var(--text-secondary)] mt-4">
+                Our team typically responds within a few hours.
               </p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Also Consider */}
+      {related.length > 0 && (
+        <div className="mt-16">
+          <motion.div
+            variants={fadeInUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="mb-8"
+          >
+            <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-3">
+              Also Consider
+            </span>
+            <h2 className="font-heading text-2xl font-bold text-[var(--text-primary)]">
+              You Might Also Like
+            </h2>
+          </motion.div>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
+            {related.map((p) => (
+              <motion.div key={p.id} variants={fadeInUp}>
+                <PackageCard pkg={p} />
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
