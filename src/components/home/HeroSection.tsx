@@ -114,7 +114,7 @@ export default function HeroSection() {
           >
             <LocationOnIcon sx={{ fontSize: 16, color: '#FF6B35' }} />
             <span className="text-white text-sm font-medium">
-              Explore The World
+              Discover Sri Lanka
             </span>
           </motion.div>
 
@@ -126,10 +126,10 @@ export default function HeroSection() {
             transition={{ delay: 0.4 }}
             className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-6"
           >
-            Discover Your{' '}
-            <span className="text-gradient-light">Dream</span>
+            Discover the{' '}
+            <span className="text-gradient-light">Soul</span>
             <br />
-            Destination
+            of Sri Lanka
           </motion.h1>
 
           {/* Subheading */}

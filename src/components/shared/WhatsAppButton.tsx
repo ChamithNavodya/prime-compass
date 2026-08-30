@@ -7,7 +7,7 @@ import { BRAND_CONFIG } from '@/constants';
 export default function WhatsAppButton() {
   const phone = BRAND_CONFIG.contact.phone.replace(/\D/g, '');
   const message = encodeURIComponent(
-    "Hi Voyaage! I'm interested in booking a tour package."
+    "Hi Pear Trails! I'm interested in exploring Sri Lanka with you. Could you help me plan my trip?"
   );
 
   return (

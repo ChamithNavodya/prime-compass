@@ -64,7 +64,7 @@ export default function PackagesClient() {
         badge="Our Tours"
         title="Explore All"
         highlight="Packages"
-        subtitle={`${packages.length} curated experiences — find your perfect adventure`}
+        subtitle="5 handcrafted Sri Lanka experiences — find your perfect journey"
       />
 
       <PackageFilter filters={filters} onChange={setFilters} />
