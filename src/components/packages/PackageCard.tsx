@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Rating from '@mui/material/Rating';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -77,7 +76,7 @@ export default function PackageCard({ pkg }: { pkg: Package }) {
         <div className="h-px bg-gray-100 mb-4" />
 
         {/* Price & CTAs */}
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <div>
             <span className="text-xs text-[var(--text-secondary)]">From</span>
             <p className="font-heading font-bold text-xl text-primary">
@@ -101,7 +100,7 @@ export default function PackageCard({ pkg }: { pkg: Package }) {
               Book
             </Link>
           </div>
-        </div>
+        </div> */}
       </div>
     </motion.div>
   );
