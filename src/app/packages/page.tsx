@@ -2,6 +2,10 @@ import { Suspense } from 'react';
 import Image from 'next/image';
 import PackagesClient from './PackagesClient';
 import GridSkeleton from '@/components/shared/LoadingSkeleton';
+import { prisma } from '@/lib/prisma';
+import { DbPackage } from '@/types/db';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Tour Packages | Pear Trails',
@@ -9,7 +13,26 @@ export const metadata = {
     "Explore Pear Trails' Sri Lanka packages — 7-day island journeys, honeymoon collections, wildlife safaris, customized tours, and airport transfers.",
 };
 
-export default function PackagesPage() {
+export default async function PackagesPage() {
+  const [rawPackages, categories] = await Promise.all([
+    prisma.package.findMany({
+      include: { categories: true },
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.category.findMany({ orderBy: { name: 'asc' } }),
+  ]);
+
+  const packages: DbPackage[] = rawPackages.map((pkg) => ({
+    ...pkg,
+    pricingType: pkg.pricingType as 'FIXED' | 'RANGE' | 'HIDDEN',
+    itinerary: Array.isArray(pkg.itinerary)
+      ? (pkg.itinerary as { day: number; title: string; description: string }[])
+      : [],
+    route: Array.isArray(pkg.route)
+      ? (pkg.route as { id: string; label: string; lat: number; lng: number; destinationId?: string }[])
+      : [],
+  }));
+
   return (
     <div className="min-h-screen bg-[var(--background)]">
       {/* Hero banner */}
@@ -36,14 +59,13 @@ export default function PackagesPage() {
         </div>
       </div>
 
-      {/* Package listing */}
       <div className="pt-12 pb-16">
         <Suspense fallback={
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
             <GridSkeleton count={5} />
           </div>
         }>
-          <PackagesClient />
+          <PackagesClient packages={packages} categories={categories} />
         </Suspense>
       </div>
     </div>

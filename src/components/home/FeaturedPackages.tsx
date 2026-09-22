@@ -5,26 +5,24 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { packages } from '@/data/packages';
 import SectionTitle from '@/components/shared/SectionTitle';
 import PackageCard from '@/components/packages/PackageCard';
 import { staggerContainer, fadeInUp } from '@/utils/animations';
+import { DbPackage, DbCategory } from '@/types/db';
 
-const CATEGORIES = [
-  { value: 'all', label: 'All Packages' },
-  { value: 'adventure', label: 'Adventure' },
-  { value: 'luxury', label: 'Luxury' },
-  { value: 'beach', label: 'Beach' },
-  { value: 'cultural', label: 'Cultural' },
-  { value: 'honeymoon', label: 'Honeymoon' },
-  { value: 'family', label: 'Family' },
-];
+interface Props {
+  packages: DbPackage[];
+  categories: DbCategory[];
+}
 
-export default function FeaturedPackages() {
+export default function FeaturedPackages({ packages, categories }: Props) {
   const [activeTab, setActiveTab] = useState('all');
-  const featured = packages.filter((p) =>
-    activeTab === 'all' ? true : p.category === activeTab
-  ).slice(0, 6);
+
+  const tabs = [{ value: 'all', label: 'All Packages' }, ...categories.map((c) => ({ value: c.slug, label: c.name }))];
+
+  const featured = packages
+    .filter((p) => activeTab === 'all' || p.categories.some((c) => c.slug === activeTab))
+    .slice(0, 6);
 
   return (
     <section className="py-20 bg-[var(--background)]">
@@ -36,7 +34,6 @@ export default function FeaturedPackages() {
           subtitle="Explore our most loved destinations and experiences, curated by travel experts"
         />
 
-        {/* Filter Tabs */}
         <motion.div
           variants={fadeInUp}
           initial="hidden"
@@ -50,29 +47,21 @@ export default function FeaturedPackages() {
             variant="scrollable"
             scrollButtons="auto"
             sx={{
-              '& .MuiTabs-indicator': {
-                backgroundColor: 'var(--secondary)',
-                height: 3,
-                borderRadius: 2,
-              },
+              '& .MuiTabs-indicator': { backgroundColor: 'var(--secondary)', height: 3, borderRadius: 2 },
               '& .MuiTab-root': {
                 color: 'var(--text-secondary)',
                 fontWeight: 500,
-                '&.Mui-selected': {
-                  color: 'var(--primary)',
-                  fontWeight: 700,
-                },
+                '&.Mui-selected': { color: 'var(--primary)', fontWeight: 700 },
               },
             }}
           >
-            {CATEGORIES.map((cat) => (
+            {tabs.map((cat) => (
               <Tab key={cat.value} label={cat.label} value={cat.value} />
             ))}
           </Tabs>
           <div className="h-px bg-gray-200 -mt-px" />
         </motion.div>
 
-        {/* Grid */}
         <motion.div
           key={activeTab}
           variants={staggerContainer}
@@ -87,7 +76,6 @@ export default function FeaturedPackages() {
           ))}
         </motion.div>
 
-        {/* View all */}
         <motion.div
           variants={fadeInUp}
           initial="hidden"

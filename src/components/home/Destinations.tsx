@@ -4,11 +4,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { destinations } from '@/data/destinations';
 import SectionTitle from '@/components/shared/SectionTitle';
 import { staggerContainer, scaleIn } from '@/utils/animations';
+import { DbDestination } from '@/types/db';
 
-export default function Destinations() {
+interface Props {
+  destinations: DbDestination[];
+}
+
+export default function Destinations({ destinations }: Props) {
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,7 +20,7 @@ export default function Destinations() {
           badge="Top Picks"
           title="Popular"
           highlight="Destinations"
-          subtitle="From tropical islands to mountain peaks — explore the world's most captivating places"
+          subtitle="From tropical highlands to pristine beaches — explore Sri Lanka's most captivating places"
         />
 
         <motion.div
@@ -47,11 +51,7 @@ export default function Destinations() {
                     sizes="(max-width: 768px) 50vw, 25vw"
                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-
-                  {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-                  {/* Info */}
                   <div className="absolute bottom-0 left-0 right-0 p-4">
                     <h3 className="font-heading font-bold text-white text-lg leading-tight">
                       {dest.name}
@@ -61,13 +61,13 @@ export default function Destinations() {
                         <LocationOnIcon sx={{ fontSize: 12 }} />
                         {dest.country}
                       </span>
-                      <span className="text-xs text-white bg-secondary/80 px-2 py-0.5 rounded-full">
-                        {dest.packageCount} tours
-                      </span>
+                      {dest._count && (
+                        <span className="text-xs text-white bg-secondary/80 px-2 py-0.5 rounded-full">
+                          {dest._count.packages} tours
+                        </span>
+                      )}
                     </div>
                   </div>
-
-                  {/* Hover overlay */}
                   <div className="absolute inset-0 bg-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                     <span className="text-white font-semibold text-sm px-4 py-2 border-2 border-white rounded-xl transform scale-90 group-hover:scale-100 transition-transform duration-300">
                       Explore

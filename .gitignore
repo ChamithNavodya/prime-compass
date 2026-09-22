@@ -20,6 +20,12 @@
 .DS_Store
 *.pem
 
+# AI agent tool directories
+.agents/
+.claude/
+.cursor/
+.devin/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -27,6 +33,8 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env.local
+.env
 
 # vercel
 .vercel

@@ -1,8 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
+
+const RouteMap = dynamic(() => import('./RouteMap'), { ssr: false });
 import { motion, AnimatePresence } from 'framer-motion';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -18,9 +21,8 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import EmailIcon from '@mui/icons-material/Email';
-import { Package } from '@/types';
+import { DbPackage } from '@/types/db';
 import { BRAND_CONFIG } from '@/constants';
-import { packages } from '@/data/packages';
 import PackageCard from './PackageCard';
 import { staggerContainer, fadeInUp } from '@/utils/animations';
 
@@ -48,17 +50,17 @@ function TabPanel({ children, value, index }: TabPanelProps) {
   );
 }
 
-export default function PackageDetail({ pkg }: { pkg: Package }) {
+export default function PackageDetail({ pkg, related }: { pkg: DbPackage; related: DbPackage[] }) {
   const [activeImage, setActiveImage] = useState(0);
   const [tab, setTab] = useState(0);
+  const hasRoute = Array.isArray(pkg.route) && pkg.route.length > 0;
+  const tabs = ['Overview', 'Itinerary', 'Inclusions', 'Highlights', ...(hasRoute ? ['Route'] : [])];
 
   const phone = BRAND_CONFIG.contact.phone.replace(/\D/g, '');
   const waMessage = encodeURIComponent(
     `Hi Pear Trails! I'm interested in the "${pkg.title}" package. Could you share more details?`
   );
   const waUrl = `https://wa.me/${phone}?text=${waMessage}`;
-
-  const related = packages.filter((p) => p.id !== pkg.id).slice(0, 2);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -116,19 +118,35 @@ export default function PackageDetail({ pkg }: { pkg: Package }) {
           <div className="mb-6">
             <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
               <div>
-                <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full capitalize mb-2">
-                  {pkg.category}
-                </span>
+                {pkg.categories?.map((c) => (
+                  <span key={c.id} className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full capitalize mb-2 mr-1">
+                    {c.name}
+                  </span>
+                ))}
                 <h1 className="font-heading text-2xl md:text-3xl font-bold text-[var(--text-primary)]">
                   {pkg.title}
                 </h1>
               </div>
               <div className="text-right">
-                <p className="text-xs text-[var(--text-secondary)]">From</p>
-                <p className="font-heading text-3xl font-bold text-primary">
-                  ${pkg.price.toLocaleString()}
-                </p>
-                <p className="text-xs text-[var(--text-secondary)]">per person</p>
+                {pkg.pricingType === 'HIDDEN' ? (
+                  <p className="font-heading text-xl font-bold text-primary">Contact for pricing</p>
+                ) : pkg.pricingType === 'RANGE' && pkg.priceMin != null && pkg.priceMax != null ? (
+                  <>
+                    <p className="text-xs text-[var(--text-secondary)]">From</p>
+                    <p className="font-heading text-2xl font-bold text-primary">
+                      ${pkg.priceMin.toLocaleString()} – ${pkg.priceMax.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-[var(--text-secondary)]">per person</p>
+                  </>
+                ) : pkg.price != null ? (
+                  <>
+                    <p className="text-xs text-[var(--text-secondary)]">From</p>
+                    <p className="font-heading text-3xl font-bold text-primary">
+                      ${pkg.price.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-[var(--text-secondary)]">per person</p>
+                  </>
+                ) : null}
               </div>
             </div>
 
@@ -163,7 +181,7 @@ export default function PackageDetail({ pkg }: { pkg: Package }) {
                 '& .MuiTab-root': { color: 'var(--text-secondary)', '&.Mui-selected': { color: 'var(--primary)', fontWeight: 700 } },
               }}
             >
-              {['Overview', 'Itinerary', 'Inclusions', 'Highlights'].map((label, i) => (
+              {tabs.map((label, i) => (
                 <Tab key={i} label={label} />
               ))}
             </Tabs>
@@ -238,6 +256,24 @@ export default function PackageDetail({ pkg }: { pkg: Package }) {
                   ))}
                 </div>
               </TabPanel>
+
+              {hasRoute && (
+                <TabPanel value={tab} index={4}>
+                  <div className="space-y-4">
+                    <div className="flex flex-wrap gap-3 mb-2">
+                      {pkg.route.map((wp, i) => (
+                        <div key={wp.id} className="flex items-center gap-2 bg-primary/5 rounded-xl px-3 py-2">
+                          <span className="w-6 h-6 bg-[var(--primary)] text-white rounded-full text-xs font-bold flex items-center justify-center flex-shrink-0">
+                            {i + 1}
+                          </span>
+                          <span className="text-sm font-medium text-[var(--text-primary)]">{wp.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <RouteMap waypoints={pkg.route} />
+                  </div>
+                </TabPanel>
+              )}
             </div>
           </div>
         </div>
@@ -268,12 +304,25 @@ export default function PackageDetail({ pkg }: { pkg: Package }) {
                   <span>Best: {pkg.bestTimeToVisit}</span>
                 </div>
                 <div className="h-px bg-gray-200" />
-                <div className="flex items-baseline gap-1">
-                  <span className="text-xs text-[var(--text-secondary)]">From</span>
-                  <span className="font-heading font-bold text-2xl text-primary">
-                    ${pkg.price.toLocaleString()}
-                  </span>
-                  <span className="text-xs text-[var(--text-secondary)]">/ person</span>
+                <div className="flex items-baseline gap-1 flex-wrap">
+                  {pkg.pricingType === 'HIDDEN' ? (
+                    <span className="font-heading font-bold text-lg text-primary">Contact for pricing</span>
+                  ) : pkg.pricingType === 'RANGE' && pkg.priceMin != null && pkg.priceMax != null ? (
+                    <>
+                      <span className="text-xs text-[var(--text-secondary)]">From</span>
+                      <span className="font-heading font-bold text-xl text-primary">
+                        ${pkg.priceMin.toLocaleString()} – ${pkg.priceMax.toLocaleString()}
+                      </span>
+                    </>
+                  ) : pkg.price != null ? (
+                    <>
+                      <span className="text-xs text-[var(--text-secondary)]">From</span>
+                      <span className="font-heading font-bold text-2xl text-primary">
+                        ${pkg.price.toLocaleString()}
+                      </span>
+                      <span className="text-xs text-[var(--text-secondary)]">/ person</span>
+                    </>
+                  ) : null}
                 </div>
               </div>
 

@@ -7,15 +7,44 @@ import Rating from '@mui/material/Rating';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import { Package } from '@/types';
+import { DbPackage } from '@/types/db';
 import { BRAND_CONFIG } from '@/constants';
 
-export default function PackageCard({ pkg }: { pkg: Package }) {
+function PriceDisplay({ pkg }: { pkg: DbPackage }) {
+  if (pkg.pricingType === 'HIDDEN') {
+    return (
+      <p className="font-heading font-bold text-base text-primary leading-tight">
+        Contact for pricing
+      </p>
+    );
+  }
+  if (pkg.pricingType === 'RANGE' && pkg.priceMin != null && pkg.priceMax != null) {
+    return (
+      <p className="font-heading font-bold text-base text-primary leading-tight">
+        ${pkg.priceMin.toLocaleString()} – ${pkg.priceMax.toLocaleString()}
+        <span className="text-xs font-normal text-[var(--text-secondary)] ml-1">{pkg.currency}</span>
+      </p>
+    );
+  }
+  if (pkg.price != null) {
+    return (
+      <p className="font-heading font-bold text-xl text-primary leading-tight">
+        ${pkg.price.toLocaleString()}
+        <span className="text-xs font-normal text-[var(--text-secondary)] ml-1">{pkg.currency}</span>
+      </p>
+    );
+  }
+  return null;
+}
+
+export default function PackageCard({ pkg }: { pkg: DbPackage }) {
   const phone = BRAND_CONFIG.contact.phone.replace(/\D/g, '');
   const waMessage = encodeURIComponent(
     `Hi Pear Trails! I'm interested in the "${pkg.title}" package. Could you share more details?`
   );
   const waUrl = `https://wa.me/${phone}?text=${waMessage}`;
+
+  const primaryCategory = pkg.categories?.[0];
 
   return (
     <Link href={`/packages/${pkg.id}`} className="block group">
@@ -50,9 +79,11 @@ export default function PackageCard({ pkg }: { pkg: Package }) {
           </div>
 
           {/* Category badge */}
-          <span className="absolute top-3 right-3 px-2.5 py-1 glass-effect text-white text-xs font-medium rounded-full capitalize">
-            {pkg.category}
-          </span>
+          {primaryCategory && (
+            <span className="absolute top-3 right-3 px-2.5 py-1 glass-effect text-white text-xs font-medium rounded-full capitalize">
+              {primaryCategory.name}
+            </span>
+          )}
         </div>
 
         {/* Content */}
@@ -80,17 +111,15 @@ export default function PackageCard({ pkg }: { pkg: Package }) {
             </div>
           </div>
 
-          {/* Divider */}
           <div className="h-px bg-gray-100 mb-4" />
 
           {/* Price & CTAs */}
           <div className="flex items-center justify-between mt-auto">
             <div>
-              <span className="text-xs text-[var(--text-secondary)]">From</span>
-              <p className="font-heading font-bold text-xl text-primary leading-tight">
-                ${pkg.price.toLocaleString()}
-                <span className="text-xs font-normal text-[var(--text-secondary)] ml-1">{pkg.currency}</span>
-              </p>
+              {pkg.pricingType !== 'HIDDEN' && (
+                <span className="text-xs text-[var(--text-secondary)]">From</span>
+              )}
+              <PriceDisplay pkg={pkg} />
             </div>
             <div className="flex gap-2">
               <span className="px-3 py-2 text-sm border border-primary text-primary rounded-lg font-medium group-hover:bg-primary group-hover:text-white transition-all">
