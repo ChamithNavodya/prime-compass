@@ -3,23 +3,30 @@ import Image from 'next/image';
 import Link from 'next/link';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ExploreIcon from '@mui/icons-material/Explore';
-import { destinations } from '@/data/destinations';
 import SectionTitle from '@/components/shared/SectionTitle';
+import { prisma } from '@/lib/prisma';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Destinations | Voyaage',
-  description: 'Explore the world\'s most captivating destinations with Voyaage.',
+  title: 'Destinations | Pear Trails',
+  description: 'Explore Sri Lanka\'s most captivating destinations with Pear Trails.',
 };
 
-export default function DestinationsPage() {
+export default async function DestinationsPage() {
+  const destinations = await prisma.destination.findMany({
+    orderBy: { name: 'asc' },
+    include: { _count: { select: { packages: true } } },
+  });
+
   return (
     <div className="min-h-screen bg-[var(--background)] pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionTitle
-          badge="Explore the World"
+          badge="Explore Sri Lanka"
           title="All"
           highlight="Destinations"
-          subtitle="Every corner of the globe holds a story. Choose yours."
+          subtitle="Every corner of the island holds a story. Choose yours."
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -52,17 +59,14 @@ export default function DestinationsPage() {
                 </p>
                 <div className="flex flex-wrap gap-1 mb-3">
                   {dest.attractions.slice(0, 3).map((a) => (
-                    <span
-                      key={a}
-                      className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full"
-                    >
+                    <span key={a} className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full">
                       {a}
                     </span>
                   ))}
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-[var(--text-primary)]">
-                    {dest.packageCount} packages
+                    {dest._count.packages} packages
                   </span>
                   <span className="text-sm text-secondary font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
                     <ExploreIcon sx={{ fontSize: 16 }} />

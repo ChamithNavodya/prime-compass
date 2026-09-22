@@ -9,27 +9,29 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { FilterOptions } from '@/types';
+import { DbCategory } from '@/types/db';
 
-const CATEGORIES = [
-  { value: 'all',       label: 'All Packages' },
-  { value: 'cultural',  label: 'Cultural Tours' },
-  { value: 'honeymoon', label: 'Honeymoon' },
-  { value: 'adventure', label: 'Customized Tours' },
-  { value: 'luxury',    label: 'Transfers' },
-];
+export interface FilterOptions {
+  category: string;
+  minPrice: number;
+  maxPrice: number;
+  duration: string;
+  sortBy: 'price-low' | 'price-high' | 'rating' | 'popularity';
+}
 
 interface PackageFilterProps {
   filters: FilterOptions;
+  categories: DbCategory[];
   onChange: (f: FilterOptions) => void;
 }
 
-export default function PackageFilter({ filters, onChange }: PackageFilterProps) {
+export default function PackageFilter({ filters, categories, onChange }: PackageFilterProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const tabs = [{ value: 'all', label: 'All Packages' }, ...categories.map((c) => ({ value: c.slug, label: c.name }))];
 
   return (
     <div className="bg-white rounded-2xl shadow-sm p-4 mb-8">
-      {/* Category tabs */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <Tabs
           value={filters.category}
@@ -37,21 +39,14 @@ export default function PackageFilter({ filters, onChange }: PackageFilterProps)
           variant="scrollable"
           scrollButtons="auto"
           sx={{
-            '& .MuiTabs-indicator': {
-              backgroundColor: 'var(--secondary)',
-              height: 3,
-              borderRadius: 2,
-            },
+            '& .MuiTabs-indicator': { backgroundColor: 'var(--secondary)', height: 3, borderRadius: 2 },
             '& .MuiTab-root': {
               color: 'var(--text-secondary)',
-              '&.Mui-selected': {
-                color: 'var(--primary)',
-                fontWeight: 700,
-              },
+              '&.Mui-selected': { color: 'var(--primary)', fontWeight: 700 },
             },
           }}
         >
-          {CATEGORIES.map((cat) => (
+          {tabs.map((cat) => (
             <Tab key={cat.value} label={cat.label} value={cat.value} />
           ))}
         </Tabs>
@@ -69,10 +64,8 @@ export default function PackageFilter({ filters, onChange }: PackageFilterProps)
         </button>
       </div>
 
-      {/* Advanced filters */}
       {showAdvanced && (
         <div className="mt-6 pt-6 border-t grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Price range */}
           <div>
             <p className="text-sm font-medium text-[var(--text-primary)] mb-3">
               Price Range: ${filters.minPrice} – ${filters.maxPrice}
@@ -84,24 +77,18 @@ export default function PackageFilter({ filters, onChange }: PackageFilterProps)
                 onChange({ ...filters, minPrice: min, maxPrice: max });
               }}
               min={0}
-              max={2500}
+              max={5000}
               step={100}
-              sx={{
-                color: 'var(--primary)',
-                '& .MuiSlider-thumb': { width: 16, height: 16 },
-              }}
+              sx={{ color: 'var(--primary)', '& .MuiSlider-thumb': { width: 16, height: 16 } }}
             />
           </div>
 
-          {/* Sort */}
           <FormControl size="small">
             <InputLabel>Sort By</InputLabel>
             <Select
               value={filters.sortBy}
               label="Sort By"
-              onChange={(e) =>
-                onChange({ ...filters, sortBy: e.target.value as FilterOptions['sortBy'] })
-              }
+              onChange={(e) => onChange({ ...filters, sortBy: e.target.value as FilterOptions['sortBy'] })}
             >
               <MenuItem value="popularity">Popularity</MenuItem>
               <MenuItem value="price-low">Price: Low to High</MenuItem>
@@ -110,18 +97,9 @@ export default function PackageFilter({ filters, onChange }: PackageFilterProps)
             </Select>
           </FormControl>
 
-          {/* Reset */}
           <div className="flex items-end">
             <button
-              onClick={() =>
-                onChange({
-                  category: 'all',
-                  minPrice: 0,
-                  maxPrice: 2500,
-                  duration: '',
-                  sortBy: 'popularity',
-                })
-              }
+              onClick={() => onChange({ category: 'all', minPrice: 0, maxPrice: 5000, duration: '', sortBy: 'popularity' })}
               className="px-4 py-2 text-sm text-[var(--text-secondary)] border border-gray-200 rounded-lg cursor-pointer hover:border-red-300 hover:text-red-500 transition-colors"
             >
               Reset Filters

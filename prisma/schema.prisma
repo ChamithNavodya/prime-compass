@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  slug     String    @unique
+  packages Package[] @relation("PackageCategories")
+}
+
+model Destination {
+  id          String    @id @default(cuid())
+  name        String
+  country     String
+  image       String
+  description String
+  latitude    Float?
+  longitude   Float?
+  attractions String[]
+  packages    Package[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Package {
+  id              String      @id @default(cuid())
+  title           String
+  destination     String
+  country         String
+  duration        String
+  pricingType     PricingType @default(FIXED)
+  price           Float?
+  priceMin        Float?
+  priceMax        Float?
+  currency        String      @default("USD")
+  image           String
+  gallery         String[]
+  rating          Float       @default(0)
+  reviews         Int         @default(0)
+  description     String
+  itinerary       Json        @default("[]")
+  route           Json        @default("[]")
+  inclusions      String[]
+  exclusions      String[]
+  highlights      String[]
+  bestTimeToVisit String?
+  isFeatured      Boolean     @default(false)
+  isBestSeller    Boolean     @default(false)
+  discount        Float?
+  categories      Category[]  @relation("PackageCategories")
+  destinationId   String?
+  destinationRel  Destination? @relation(fields: [destinationId], references: [id])
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+enum PricingType {
+  HIDDEN
+  FIXED
+  RANGE
+}

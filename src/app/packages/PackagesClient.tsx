@@ -1,16 +1,20 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { packages } from '@/data/packages';
 import PackageCard from '@/components/packages/PackageCard';
-import PackageFilter from '@/components/packages/PackageFilter';
+import PackageFilter, { FilterOptions } from '@/components/packages/PackageFilter';
 import SectionTitle from '@/components/shared/SectionTitle';
-import { FilterOptions } from '@/types';
+import { DbPackage, DbCategory } from '@/types/db';
 import { staggerContainer, fadeInUp } from '@/utils/animations';
 
-export default function PackagesClient() {
+interface Props {
+  packages: DbPackage[];
+  categories: DbCategory[];
+}
+
+export default function PackagesClient({ packages, categories }: Props) {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   const categoryParam = searchParams.get('category') || 'all';
@@ -23,10 +27,6 @@ export default function PackagesClient() {
     sortBy: 'popularity',
   });
 
-  useEffect(() => {
-    setFilters((f) => ({ ...f, category: categoryParam }));
-  }, [categoryParam]);
-
   const filtered = useMemo(() => {
     let list = packages.filter((pkg) => {
       const matchQuery =
@@ -34,19 +34,32 @@ export default function PackagesClient() {
         pkg.title.toLowerCase().includes(query.toLowerCase()) ||
         pkg.destination.toLowerCase().includes(query.toLowerCase()) ||
         pkg.country.toLowerCase().includes(query.toLowerCase());
+
       const matchCategory =
-        filters.category === 'all' || pkg.category === filters.category;
-      const matchPrice =
-        pkg.price >= filters.minPrice && pkg.price <= filters.maxPrice;
+        filters.category === 'all' ||
+        pkg.categories.some((c) => c.slug === filters.category);
+
+      // price matching — ignore HIDDEN packages in price filter unless no filter applied
+      let matchPrice = true;
+      if (filters.minPrice > 0 || filters.maxPrice < 5000) {
+        if (pkg.pricingType === 'HIDDEN') {
+          matchPrice = false;
+        } else if (pkg.pricingType === 'FIXED' && pkg.price != null) {
+          matchPrice = pkg.price >= filters.minPrice && pkg.price <= filters.maxPrice;
+        } else if (pkg.pricingType === 'RANGE' && pkg.priceMin != null && pkg.priceMax != null) {
+          matchPrice = pkg.priceMax >= filters.minPrice && pkg.priceMin <= filters.maxPrice;
+        }
+      }
+
       return matchQuery && matchCategory && matchPrice;
     });
 
     switch (filters.sortBy) {
       case 'price-low':
-        list = [...list].sort((a, b) => a.price - b.price);
+        list = [...list].sort((a, b) => (a.price ?? a.priceMin ?? 0) - (b.price ?? b.priceMin ?? 0));
         break;
       case 'price-high':
-        list = [...list].sort((a, b) => b.price - a.price);
+        list = [...list].sort((a, b) => (b.price ?? b.priceMax ?? 0) - (a.price ?? a.priceMax ?? 0));
         break;
       case 'rating':
         list = [...list].sort((a, b) => b.rating - a.rating);
@@ -56,7 +69,7 @@ export default function PackagesClient() {
     }
 
     return list;
-  }, [filters, query]);
+  }, [filters, query, packages]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,10 +77,10 @@ export default function PackagesClient() {
         badge="Our Tours"
         title="Explore All"
         highlight="Packages"
-        subtitle="5 handcrafted Sri Lanka experiences — find your perfect journey"
+        subtitle={`${packages.length} handcrafted Sri Lanka experience${packages.length !== 1 ? 's' : ''} — find your perfect journey`}
       />
 
-      <PackageFilter filters={filters} onChange={setFilters} />
+      <PackageFilter filters={filters} categories={categories} onChange={setFilters} />
 
       {query && (
         <p className="text-sm text-[var(--text-secondary)] mb-6">
